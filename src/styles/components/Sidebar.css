@@ -162,6 +162,13 @@
   background: rgba(239, 68, 68, 0.08);
 }
 
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
 /* ── Mobile ───────────────────────────────────────── */
 .sidebar-mobile-toggle {
   display: none;
