@@ -4,7 +4,7 @@ import { osService } from '../services/osService';
 import { db } from '../services/db';
 import { useApp } from '../contexts/AppContext';
 import type { OrdemServico, Cliente, Veiculo, Mecanico, ItemServico, ItemPeca } from '../types';
-import './OSForm.css';
+import '../styles/components/OSForm.css';
 
 interface OSFormProps {
   os: OrdemServico | null;

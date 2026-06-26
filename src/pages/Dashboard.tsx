@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Car, ClipboardList, CheckCircle, TrendingUp, Clock, Users, Wrench } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { osService } from '../services/osService';
-import './Dashboard.css';
+import '../styles/pages/Dashboard.css';
 
 const STATUS_LABELS: Record<string, string> = {
   Vistoria: 'Vistoria',

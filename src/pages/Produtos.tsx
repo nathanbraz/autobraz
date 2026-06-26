@@ -4,7 +4,7 @@ import { useApp } from '../contexts/AppContext';
 import { produtoService } from '../services/produtoService';
 import Modal from '../components/Modal';
 import type { Produto } from '../types';
-import './CrudPage.css';
+import '../styles/pages/CrudPage.css';
 
 const empty = (): Omit<Produto, 'id'> => ({
   codigo: '',

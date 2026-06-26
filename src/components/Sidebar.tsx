@@ -1,7 +1,7 @@
 import { LayoutDashboard, Users, Car, Wrench, ClipboardList, LogOut, Menu, X, Package } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import './Sidebar.css';
+import '../styles/components/Sidebar.css';
 
 type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
 

@@ -1,6 +1,6 @@
 import { Printer } from 'lucide-react';
 import type { OrdemServico, Cliente, Veiculo, Mecanico } from '../types';
-import './OSDetails.css';
+import '../styles/components/OSDetails.css';
 
 interface OSDetailsProps {
   os: OrdemServico;

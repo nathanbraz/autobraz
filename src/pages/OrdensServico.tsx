@@ -7,8 +7,8 @@ import Modal from '../components/Modal';
 import OSForm from '../components/OSForm';
 import OSDetails from '../components/OSDetails';
 import type { OrdemServico, OrdemServicoStatus } from '../types';
-import './CrudPage.css';
-import './OrdensServico.css';
+import '../styles/pages/CrudPage.css';
+import '../styles/pages/OrdensServico.css';
 
 const STATUS_LABELS: Record<OrdemServicoStatus, string> = {
   Vistoria: 'Vistoria',

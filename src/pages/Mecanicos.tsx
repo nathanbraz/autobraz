@@ -4,7 +4,7 @@ import { useApp } from '../contexts/AppContext';
 import { mecanicoService } from '../services/mecanicoService';
 import Modal from '../components/Modal';
 import type { Mecanico } from '../types';
-import './CrudPage.css';
+import '../styles/pages/CrudPage.css';
 
 const empty = (): Omit<Mecanico, 'id'> => ({ nome: '', especialidade: '', ativo: true });
 

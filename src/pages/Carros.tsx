@@ -4,7 +4,7 @@ import { useApp } from '../contexts/AppContext';
 import { carroService } from '../services/carroService';
 import Modal from '../components/Modal';
 import type { Veiculo } from '../types';
-import './CrudPage.css';
+import '../styles/pages/CrudPage.css';
 
 const empty = (): Omit<Veiculo, 'id'> => ({
   placa: '', marca: '', modelo: '', anoFabricacao: new Date().getFullYear(),
