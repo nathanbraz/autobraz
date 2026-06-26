@@ -9,6 +9,7 @@ import Mecanicos from './pages/Mecanicos';
 import OrdensServico from './pages/OrdensServico';
 import Produtos from './pages/Produtos';
 import Login from './pages/Login';
+import ThemeToggle from './components/ThemeToggle';
 
 type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
 
@@ -35,6 +36,7 @@ function MainApp() {
   return (
     <div className="app-container">
       <Sidebar activePage={currentPage} onNavigate={setActivePage} />
+      <ThemeToggle />
       <main className="main-content">
         {currentPage === 'dashboard' && <Dashboard />}
         {currentPage === 'clientes' && <Clientes />}

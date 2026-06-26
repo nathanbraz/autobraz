@@ -55,7 +55,7 @@
   cursor: pointer;
   transition: var(--transition);
 }
-.action-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+.action-btn:hover { color: var(--text-primary); background: var(--bg-hover-subtle); border-color: var(--text-muted); }
 .action-btn--danger:hover { color: var(--color-cancelado); border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
 
 /* Form sections */
@@ -114,5 +114,5 @@
   transition: var(--transition);
   font-family: var(--font-family);
 }
-.filter-tab:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+.filter-tab:hover { background: var(--bg-hover-subtle); color: var(--text-primary); }
 .filter-tab--active { background: var(--accent-glow); border-color: rgba(37,99,235,0.3); color: var(--text-primary); }
