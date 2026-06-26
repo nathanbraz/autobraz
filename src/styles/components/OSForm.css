@@ -68,7 +68,7 @@
 
 /* Totals */
 .os-totals {
-  background: rgba(11, 15, 25, 0.5);
+  background: var(--bg-main);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 1rem;

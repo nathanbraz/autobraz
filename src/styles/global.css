@@ -41,6 +41,11 @@
   /* Hover Overlays */
   --bg-hover-subtle: rgba(255, 255, 255, 0.05);
   --bg-card-subtle: rgba(255, 255, 255, 0.02);
+
+  /* Form & Table backgrounds */
+  --bg-input: rgba(11, 15, 25, 0.5);
+  --bg-input-focus: rgba(11, 15, 25, 0.8);
+  --bg-table-th: rgba(14, 19, 34, 0.4);
 }
 
 html.light {
@@ -72,6 +77,11 @@ html.light {
   
   --bg-hover-subtle: rgba(15, 23, 42, 0.04);
   --bg-card-subtle: rgba(15, 23, 42, 0.02);
+
+  /* Form & Table backgrounds */
+  --bg-input: #ffffff;
+  --bg-input-focus: #ffffff;
+  --bg-table-th: #f1f5f9;
 }
 
 
@@ -248,7 +258,7 @@ p {
 .form-control {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  background: rgba(11, 15, 25, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
@@ -260,7 +270,7 @@ p {
   outline: none;
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px var(--accent-glow);
-  background: rgba(11, 15, 25, 0.8);
+  background: var(--bg-input-focus);
 }
 
 .form-row {
@@ -291,7 +301,7 @@ p {
 }
 
 .table th {
-  background: rgba(14, 19, 34, 0.4);
+  background: var(--bg-table-th);
   color: var(--text-secondary);
   font-weight: 600;
 }
