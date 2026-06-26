@@ -37,7 +37,43 @@
   --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.7);
   --glass-bg: rgba(19, 27, 46, 0.8);
   --glass-blur: blur(12px);
+
+  /* Hover Overlays */
+  --bg-hover-subtle: rgba(255, 255, 255, 0.05);
+  --bg-card-subtle: rgba(255, 255, 255, 0.02);
 }
+
+html.light {
+  /* Colors */
+  --bg-main: #f8fafc;          /* Light slate blue-gray */
+  --bg-card: #ffffff;          /* Pure white for cards */
+  --bg-sidebar: #ffffff;       /* Pure white sidebar */
+  --border: #e2e8f0;           /* Soft light gray border */
+  --border-focus: #3b82f6;     /* Focus blue border */
+  
+  --text-primary: #0f172a;     /* Dark slate for text */
+  --text-secondary: #475569;   /* Medium slate for secondary text */
+  --text-muted: #94a3b8;       /* Light slate for muted text */
+  
+  --accent-primary: #2563eb;   /* Vibrant blue accent */
+  --accent-glow: rgba(37, 99, 235, 0.08); /* Glow effect for hover */
+  
+  --color-vistoria: #0284c7;          /* Sky Blue */
+  --color-orcamento: #e11d48;         /* Rose */
+  --color-aguardando: #b45309;        /* Amber */
+  --color-execucao: #2563eb;          /* Blue */
+  --color-pronto: #059669;            /* Emerald */
+  --color-entregue: #15803d;          /* Green */
+  --color-cancelado: #dc2626;         /* Red */
+  
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  
+  --bg-hover-subtle: rgba(15, 23, 42, 0.04);
+  --bg-card-subtle: rgba(15, 23, 42, 0.02);
+}
+
 
 /* --- RESETS --- */
 * {
@@ -265,7 +301,7 @@ p {
 }
 
 .table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card-subtle);
 }
 
 /* --- PRINT MEDIA OPTIMIZATIONS --- */

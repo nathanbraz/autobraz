@@ -1,6 +1,7 @@
 import { LayoutDashboard, Users, Car, Wrench, ClipboardList, LogOut, Menu, X, Package } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import ThemeToggle from './ThemeToggle';
 import '../styles/components/Sidebar.css';
 
 type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
@@ -79,9 +80,12 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
               </span>
             </div>
           </div>
-          <button className="sidebar-logout" onClick={logout} title="Sair">
-            <LogOut size={18} />
-          </button>
+          <div className="sidebar-actions">
+            <ThemeToggle />
+            <button className="sidebar-logout" onClick={logout} title="Sair">
+              <LogOut size={18} />
+            </button>
+          </div>
         </div>
       </aside>
     </>

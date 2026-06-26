@@ -82,7 +82,7 @@
 
 .sidebar-item:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-hover-subtle);
 }
 
 .sidebar-item--active {
@@ -160,6 +160,13 @@
   color: var(--color-cancelado);
   border-color: var(--color-cancelado);
   background: rgba(239, 68, 68, 0.08);
+}
+
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 /* ── Mobile ───────────────────────────────────────── */
