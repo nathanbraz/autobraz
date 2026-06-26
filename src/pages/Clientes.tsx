@@ -4,7 +4,7 @@ import { useApp } from '../contexts/AppContext';
 import { clienteService } from '../services/clienteService';
 import Modal from '../components/Modal';
 import type { Cliente } from '../types';
-import './CrudPage.css';
+import '../styles/pages/CrudPage.css';
 
 const empty = (): Omit<Cliente, 'id'> => ({
   nome: '', telefone: '', whatsapp: false, email: '', documento: '',
