@@ -34,7 +34,11 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
   return (
     <>
       {/* Mobile toggle */}
-      <button className="sidebar-mobile-toggle no-print" onClick={() => setOpen(o => !o)} aria-label="Menu">
+      <button 
+        className={`sidebar-mobile-toggle no-print ${open ? 'sidebar-mobile-toggle--open' : ''}`} 
+        onClick={() => setOpen(o => !o)} 
+        aria-label="Menu"
+      >
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 

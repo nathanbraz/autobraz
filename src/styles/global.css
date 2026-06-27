@@ -148,6 +148,9 @@ body {
     margin-left: 0;
     padding: 1.5rem;
   }
+  .page-header {
+    padding-left: 3.5rem;
+  }
 }
 
 /* --- COMPONENTS & TYPOGRAPHY --- */
