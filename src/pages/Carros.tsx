@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Car } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { carroService } from '../services/carroService';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import type { Veiculo } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -13,11 +15,13 @@ const empty = (): Omit<Veiculo, 'id'> => ({
 
 export default function Carros() {
   const { veiculos, clientes, refreshVeiculos } = useApp();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Veiculo | null>(null);
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => { refreshVeiculos(); }, []);
 
@@ -32,19 +36,45 @@ export default function Carros() {
   const closeModal = () => { setModalOpen(false); setEditing(null); };
 
   const handleSave = async () => {
-    if (!form.placa.trim() || !form.clienteId) return;
+    if (!form.placa.trim()) {
+      toast.warning('A placa do veículo é obrigatória.');
+      return;
+    }
+    if (!form.clienteId) {
+      toast.warning('O proprietário do veículo é obrigatório.');
+      return;
+    }
     setSaving(true);
-    if (editing) await carroService.update(editing.id, form);
-    else await carroService.create(form);
-    await refreshVeiculos();
-    setSaving(false);
-    closeModal();
+    try {
+      if (editing) {
+        await carroService.update(editing.id, form);
+        toast.success('Veículo atualizado com sucesso!');
+      } else {
+        await carroService.create(form);
+        toast.success('Veículo cadastrado com sucesso!');
+      }
+      await refreshVeiculos();
+      closeModal();
+    } catch (err) {
+      toast.error('Erro ao salvar veículo.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja excluir este veículo?')) return;
-    await carroService.delete(id);
-    await refreshVeiculos();
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    try {
+      await carroService.delete(deletingId);
+      toast.success('Veículo excluído com sucesso!');
+      await refreshVeiculos();
+    } catch (err) {
+      toast.error('Erro ao excluir veículo.');
+    }
   };
 
   const set = (field: string, value: unknown) => setForm(f => ({ ...f, [field]: value }));
@@ -176,6 +206,14 @@ export default function Carros() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deletingId !== null}
+        onClose={() => setDeletingId(null)}
+        onConfirm={confirmDelete}
+        title="Excluir Veículo"
+        message="Deseja realmente excluir este veículo? Esta ação não poderá ser desfeita e todas as ordens de serviço associadas a ele também serão impactadas."
+      />
     </div>
   );
 }

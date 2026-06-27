@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Mail, User } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { clienteService } from '../services/clienteService';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import type { Cliente } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -13,11 +15,13 @@ const empty = (): Omit<Cliente, 'id'> => ({
 
 export default function Clientes() {
   const { clientes, refreshClientes } = useApp();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Cliente | null>(null);
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => { refreshClientes(); }, []);
 
@@ -32,19 +36,41 @@ export default function Clientes() {
   const closeModal = () => { setModalOpen(false); setEditing(null); };
 
   const handleSave = async () => {
-    if (!form.nome.trim()) return;
+    if (!form.nome.trim()) {
+      toast.warning('O nome do cliente é obrigatório.');
+      return;
+    }
     setSaving(true);
-    if (editing) await clienteService.update(editing.id, form);
-    else await clienteService.create(form);
-    await refreshClientes();
-    setSaving(false);
-    closeModal();
+    try {
+      if (editing) {
+        await clienteService.update(editing.id, form);
+        toast.success('Cliente atualizado com sucesso!');
+      } else {
+        await clienteService.create(form);
+        toast.success('Cliente cadastrado com sucesso!');
+      }
+      await refreshClientes();
+      closeModal();
+    } catch (err) {
+      toast.error('Erro ao salvar cliente.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja excluir este cliente?')) return;
-    await clienteService.delete(id);
-    await refreshClientes();
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    try {
+      await clienteService.delete(deletingId);
+      toast.success('Cliente excluído com sucesso!');
+      await refreshClientes();
+    } catch (err) {
+      toast.error('Erro ao excluir cliente.');
+    }
   };
 
   const set = (field: string, value: unknown) => setForm(f => ({ ...f, [field]: value }));
@@ -193,6 +219,14 @@ export default function Clientes() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deletingId !== null}
+        onClose={() => setDeletingId(null)}
+        onConfirm={confirmDelete}
+        title="Excluir Cliente"
+        message="Deseja realmente excluir este cliente? Esta ação não poderá ser desfeita e todas as informações deste cadastro serão excluídas."
+      />
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Wrench, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import '../styles/pages/Login.css';
 
 export default function Login() {
   const { login } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [showSenha, setShowSenha] = useState(false);
@@ -13,12 +15,26 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !senha) { setError('Preencha e-mail e senha.'); return; }
+    if (!email || !senha) {
+      setError('Preencha e-mail e senha.');
+      toast.warning('Preencha todos os campos para fazer login.');
+      return;
+    }
     setLoading(true);
     setError('');
-    const result = await login(email, senha);
-    if (!result.success) setError(result.error ?? 'Erro desconhecido.');
-    setLoading(false);
+    try {
+      const result = await login(email, senha);
+      if (!result.success) {
+        setError(result.error ?? 'Erro desconhecido.');
+        toast.error(result.error ?? 'Credenciais inválidas.');
+      } else {
+        toast.success('Login realizado com sucesso!');
+      }
+    } catch (err) {
+      toast.error('Erro ao conectar ao servidor.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

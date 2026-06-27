@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Package, Tag } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { produtoService } from '../services/produtoService';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import type { Produto } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -16,11 +18,13 @@ const empty = (): Omit<Produto, 'id'> => ({
 
 export default function Produtos() {
   const { produtos = [], refreshProdutos } = useApp();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Produto | null>(null);
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     refreshProdutos();
@@ -51,24 +55,40 @@ export default function Produtos() {
 
   const handleSave = async () => {
     if (!form.codigo.trim() || !form.nome.trim()) {
-      alert('Código e Nome são obrigatórios.');
+      toast.warning('Código e Nome são obrigatórios.');
       return;
     }
     setSaving(true);
-    if (editing) {
-      await produtoService.update(editing.id, form);
-    } else {
-      await produtoService.create(form);
+    try {
+      if (editing) {
+        await produtoService.update(editing.id, form);
+        toast.success('Produto atualizado com sucesso!');
+      } else {
+        await produtoService.create(form);
+        toast.success('Produto cadastrado com sucesso!');
+      }
+      await refreshProdutos();
+      closeModal();
+    } catch (err) {
+      toast.error('Erro ao salvar produto.');
+    } finally {
+      setSaving(false);
     }
-    await refreshProdutos();
-    setSaving(false);
-    closeModal();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja excluir este produto?')) return;
-    await produtoService.delete(id);
-    await refreshProdutos();
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    try {
+      await produtoService.delete(deletingId);
+      toast.success('Produto excluído com sucesso!');
+      await refreshProdutos();
+    } catch (err) {
+      toast.error('Erro ao excluir produto.');
+    }
   };
 
   const set = (field: string, value: unknown) =>
@@ -231,6 +251,14 @@ export default function Produtos() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deletingId !== null}
+        onClose={() => setDeletingId(null)}
+        onConfirm={confirmDelete}
+        title="Excluir Produto"
+        message="Deseja realmente excluir este produto? Esta ação não poderá ser desfeita."
+      />
     </div>
   );
 }

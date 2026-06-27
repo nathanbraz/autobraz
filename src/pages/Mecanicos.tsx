@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Wrench, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import { mecanicoService } from '../services/mecanicoService';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import type { Mecanico } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -10,11 +12,13 @@ const empty = (): Omit<Mecanico, 'id'> => ({ nome: '', especialidade: '', ativo:
 
 export default function Mecanicos() {
   const { mecanicos, refreshMecanicos } = useApp();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Mecanico | null>(null);
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => { refreshMecanicos(); }, []);
 
@@ -28,24 +32,51 @@ export default function Mecanicos() {
   const closeModal = () => { setModalOpen(false); setEditing(null); };
 
   const handleSave = async () => {
-    if (!form.nome.trim()) return;
+    if (!form.nome.trim()) {
+      toast.warning('O nome do mecânico é obrigatório.');
+      return;
+    }
     setSaving(true);
-    if (editing) await mecanicoService.update(editing.id, form);
-    else await mecanicoService.create(form);
-    await refreshMecanicos();
-    setSaving(false);
-    closeModal();
+    try {
+      if (editing) {
+        await mecanicoService.update(editing.id, form);
+        toast.success('Mecânico atualizado com sucesso!');
+      } else {
+        await mecanicoService.create(form);
+        toast.success('Mecânico cadastrado com sucesso!');
+      }
+      await refreshMecanicos();
+      closeModal();
+    } catch (err) {
+      toast.error('Erro ao salvar mecânico.');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja excluir este mecânico?')) return;
-    await mecanicoService.delete(id);
-    await refreshMecanicos();
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    try {
+      await mecanicoService.delete(deletingId);
+      toast.success('Mecânico excluído com sucesso!');
+      await refreshMecanicos();
+    } catch (err) {
+      toast.error('Erro ao excluir mecânico.');
+    }
   };
 
   const toggleAtivo = async (m: Mecanico) => {
-    await mecanicoService.update(m.id, { ativo: !m.ativo });
-    await refreshMecanicos();
+    try {
+      await mecanicoService.update(m.id, { ativo: !m.ativo });
+      toast.success(`Mecânico ${!m.ativo ? 'ativado' : 'desativado'} com sucesso!`);
+      await refreshMecanicos();
+    } catch (err) {
+      toast.error('Erro ao alterar status do mecânico.');
+    }
   };
 
   const set = (field: string, value: unknown) => setForm(f => ({ ...f, [field]: value }));
@@ -150,6 +181,14 @@ export default function Mecanicos() {
           </label>
         </div>
       </Modal>
+
+      <ConfirmModal
+        isOpen={deletingId !== null}
+        onClose={() => setDeletingId(null)}
+        onConfirm={confirmDelete}
+        title="Excluir Mecânico"
+        message="Deseja realmente excluir este mecânico? Esta ação não poderá ser desfeita."
+      />
     </div>
   );
 }

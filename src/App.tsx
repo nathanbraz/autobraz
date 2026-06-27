@@ -9,6 +9,7 @@ import Mecanicos from './pages/Mecanicos';
 import OrdensServico from './pages/OrdensServico';
 import Produtos from './pages/Produtos';
 import Login from './pages/Login';
+import { ToastProvider } from './contexts/ToastContext';
 
 type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
 
@@ -51,7 +52,9 @@ export default function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <MainApp />
+        <ToastProvider>
+          <MainApp />
+        </ToastProvider>
       </AppProvider>
     </AuthProvider>
   );
