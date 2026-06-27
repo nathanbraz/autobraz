@@ -2,33 +2,28 @@ import { LayoutDashboard, Users, Car, Wrench, ClipboardList, LogOut, Menu, X, Pa
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
+import { NavLink, useNavigate } from 'react-router-dom';
 import '../styles/components/Sidebar.css';
 
-type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
-
-interface SidebarProps {
-  activePage: Page;
-  onNavigate: (page: Page) => void;
-}
-
 const allItems = [
-  { id: 'dashboard' as Page, label: 'Dashboard', icon: LayoutDashboard, adminOnly: true },
-  { id: 'clientes' as Page, label: 'Clientes', icon: Users, adminOnly: true },
-  { id: 'carros' as Page, label: 'Veículos', icon: Car, adminOnly: true },
-  { id: 'produtos' as Page, label: 'Produtos', icon: Package, adminOnly: true },
-  { id: 'mecanicos' as Page, label: 'Equipe', icon: Wrench, adminOnly: true },
-  { id: 'ordens' as Page, label: 'Ordens de Serviço', icon: ClipboardList, adminOnly: false },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/', adminOnly: true },
+  { id: 'clientes', label: 'Clientes', icon: Users, path: '/clientes', adminOnly: true },
+  { id: 'carros', label: 'Veículos', icon: Car, path: '/carros', adminOnly: true },
+  { id: 'produtos', label: 'Produtos', icon: Package, path: '/produtos', adminOnly: true },
+  { id: 'mecanicos', label: 'Equipe', icon: Wrench, path: '/mecanicos', adminOnly: true },
+  { id: 'ordens', label: 'Ordens de Serviço', icon: ClipboardList, path: '/ordens', adminOnly: false },
 ];
 
-export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
+export default function Sidebar() {
   const { usuario, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const items = allItems.filter(i => !i.adminOnly || isAdmin);
 
-  const handleNav = (page: Page) => {
-    onNavigate(page);
-    setOpen(false);
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -59,15 +54,16 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
 
         {/* Nav */}
         <nav className="sidebar-nav">
-          {items.map(({ id, label, icon: Icon }) => (
-            <button
+          {items.map(({ id, label, icon: Icon, path }) => (
+            <NavLink
               key={id}
-              className={`sidebar-item ${activePage === id ? 'sidebar-item--active' : ''}`}
-              onClick={() => handleNav(id)}
+              to={path}
+              className={({ isActive }) => `sidebar-item ${isActive ? 'sidebar-item--active' : ''}`}
+              onClick={() => setOpen(false)}
             >
               <Icon size={18} />
               <span>{label}</span>
-            </button>
+            </NavLink>
           ))}
         </nav>
 
@@ -86,7 +82,7 @@ export default function Sidebar({ activePage, onNavigate }: SidebarProps) {
           </div>
           <div className="sidebar-actions">
             <ThemeToggle />
-            <button className="sidebar-logout" onClick={logout} title="Sair">
+            <button className="sidebar-logout" onClick={handleLogout} title="Sair">
               <LogOut size={18} />
             </button>
           </div>

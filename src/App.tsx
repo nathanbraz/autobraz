@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import Sidebar from './components/Sidebar';
@@ -10,12 +9,10 @@ import OrdensServico from './pages/OrdensServico';
 import Produtos from './pages/Produtos';
 import Login from './pages/Login';
 import { ToastProvider } from './contexts/ToastContext';
-
-type Page = 'dashboard' | 'clientes' | 'carros' | 'mecanicos' | 'ordens' | 'produtos';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 function MainApp() {
   const { usuario, loading } = useAuth();
-  const [activePage, setActivePage] = useState<Page>('dashboard');
 
   if (loading) {
     return (
@@ -29,20 +26,30 @@ function MainApp() {
     return <Login />;
   }
 
-  // Se o usuário não for administrador, forçar para a página de Ordens de Serviço (única que ele tem acesso)
   const isUserAdmin = usuario.role === 'admin';
-  const currentPage = !isUserAdmin ? 'ordens' : activePage;
 
   return (
     <div className="app-container">
-      <Sidebar activePage={currentPage} onNavigate={setActivePage} />
+      <Sidebar />
       <main className="main-content">
-        {currentPage === 'dashboard' && <Dashboard />}
-        {currentPage === 'clientes' && <Clientes />}
-        {currentPage === 'carros' && <Carros />}
-        {currentPage === 'mecanicos' && <Mecanicos />}
-        {currentPage === 'ordens' && <OrdensServico />}
-        {currentPage === 'produtos' && <Produtos />}
+        <Routes>
+          {isUserAdmin ? (
+            <>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/clientes" element={<Clientes />} />
+              <Route path="/carros" element={<Carros />} />
+              <Route path="/mecanicos" element={<Mecanicos />} />
+              <Route path="/produtos" element={<Produtos />} />
+              <Route path="/ordens" element={<OrdensServico />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </>
+          ) : (
+            <>
+              <Route path="/ordens" element={<OrdensServico />} />
+              <Route path="*" element={<Navigate to="/ordens" replace />} />
+            </>
+          )}
+        </Routes>
       </main>
     </div>
   );
@@ -50,13 +57,15 @@ function MainApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppProvider>
-        <ToastProvider>
-          <MainApp />
-        </ToastProvider>
-      </AppProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppProvider>
+          <ToastProvider>
+            <MainApp />
+          </ToastProvider>
+        </AppProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
