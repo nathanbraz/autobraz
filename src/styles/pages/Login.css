@@ -155,7 +155,7 @@
 .login-hint {
   margin-top: 1.75rem;
   padding: 0.875rem;
-  background: rgba(11, 15, 25, 0.5);
+  background: var(--bg-main);
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.75rem;

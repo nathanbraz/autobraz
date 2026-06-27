@@ -46,7 +46,7 @@
 }
 
 .os-detail-section {
-  background: rgba(19, 27, 46, 0.4);
+  background: var(--bg-section);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1.25rem;
@@ -108,7 +108,7 @@
 }
 
 .os-detail-totals {
-  background: rgba(19, 27, 46, 0.6);
+  background: var(--bg-section-totals);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1.5rem;

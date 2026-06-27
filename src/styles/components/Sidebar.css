@@ -185,6 +185,13 @@
   transition: var(--transition);
 }
 
+.sidebar-mobile-toggle--open {
+  left: 206px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .sidebar-overlay {
   display: none;
   position: fixed;
