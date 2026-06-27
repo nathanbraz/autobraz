@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { osService } from '../services/osService';
 import { db } from '../services/db';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext';
 import type { OrdemServico, Cliente, Veiculo, Mecanico, ItemServico, ItemPeca } from '../types';
 import '../styles/components/OSForm.css';
 
@@ -29,6 +30,7 @@ const defaultOS = (): Omit<OrdemServico, 'id' | 'numeroOS' | 'valorTotalServicos
 
 export default function OSForm({ os, clientes, veiculos, mecanicos, onSave, onCancel }: OSFormProps) {
   const { produtos = [] } = useApp();
+  const { toast } = useToast();
   const [form, setForm] = useState(os ? { ...os } : defaultOS());
   const [saving, setSaving] = useState(false);
   const [veiculosFiltrados, setVeiculosFiltrados] = useState<Veiculo[]>([]);
@@ -76,17 +78,24 @@ export default function OSForm({ os, clientes, veiculos, mecanicos, onSave, onCa
 
   const handleSave = async () => {
     if (!form.clienteId || !form.veiculoId) {
-      alert('Selecione um cliente e um veículo.');
+      toast.warning('Selecione um cliente e um veículo.');
       return;
     }
     setSaving(true);
-    if (os) {
-      await osService.update(os.id, form);
-    } else {
-      await osService.create(form);
+    try {
+      if (os) {
+        await osService.update(os.id, form);
+        toast.success('Ordem de Serviço atualizada com sucesso!');
+      } else {
+        await osService.create(form);
+        toast.success('Ordem de Serviço criada com sucesso!');
+      }
+      onSave();
+    } catch (err) {
+      toast.error('Erro ao salvar Ordem de Serviço.');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    onSave();
   };
 
   return (

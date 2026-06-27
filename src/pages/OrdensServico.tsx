@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Plus, Search, Eye, Trash2, ChevronRight, ClipboardList } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import { osService } from '../services/osService';
 import Modal from '../components/Modal';
+import ConfirmModal from '../components/ConfirmModal';
 import OSForm from '../components/OSForm';
 import OSDetails from '../components/OSDetails';
 import type { OrdemServico, OrdemServicoStatus } from '../types';
@@ -33,11 +35,13 @@ const TABS: { id: string; label: string }[] = [
 export default function OrdensServico() {
   const { ordens, clientes, veiculos, mecanicos, refreshOrdens, refreshAll } = useApp();
   const { isAdmin } = useAuth();
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [formOpen, setFormOpen] = useState(false);
   const [editingOS, setEditingOS] = useState<OrdemServico | null>(null);
   const [viewingOS, setViewingOS] = useState<OrdemServico | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => { refreshAll(); }, []);
 
@@ -56,10 +60,19 @@ export default function OrdensServico() {
     new Date(b.dataEntrada).getTime() - new Date(a.dataEntrada).getTime()
   );
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja excluir esta OS?')) return;
-    await osService.delete(id);
-    await refreshOrdens();
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    try {
+      await osService.delete(deletingId);
+      toast.success('Ordem de Serviço excluída com sucesso!');
+      await refreshOrdens();
+    } catch (err) {
+      toast.error('Erro ao excluir Ordem de Serviço.');
+    }
   };
 
   const handleStatusChange = async (os: OrdemServico, newStatus: OrdemServicoStatus) => {
@@ -243,6 +256,14 @@ export default function OrdensServico() {
           />
         </Modal>
       )}
+
+      <ConfirmModal
+        isOpen={deletingId !== null}
+        onClose={() => setDeletingId(null)}
+        onConfirm={confirmDelete}
+        title="Excluir Ordem de Serviço"
+        message="Deseja realmente excluir esta OS? Esta ação não poderá ser desfeita e removerá permanentemente o histórico financeiro e de serviços associados a ela."
+      />
     </div>
   );
 }
