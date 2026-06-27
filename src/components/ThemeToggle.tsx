@@ -17,8 +17,10 @@ export default function ThemeToggle() {
     const root = document.documentElement;
     if (theme === 'light') {
       root.classList.add('light');
+      root.style.backgroundColor = '#f8fafc';
     } else {
       root.classList.remove('light');
+      root.style.backgroundColor = '#0b0f19';
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
