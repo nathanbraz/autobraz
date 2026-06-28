@@ -5,6 +5,7 @@ import { useToast } from '../contexts/ToastContext';
 import { mecanicoService } from '../services/mecanicoService';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
+import Pagination from '../components/Pagination';
 import type { Mecanico } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -20,12 +21,21 @@ export default function Mecanicos() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   useEffect(() => { refreshMecanicos(); }, []);
 
   const filtered = mecanicos.filter(m =>
     m.nome.toLowerCase().includes(search.toLowerCase()) ||
     m.especialidade.toLowerCase().includes(search.toLowerCase())
   );
+
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openCreate = () => { setEditing(null); setForm(empty()); setModalOpen(true); };
   const openEdit = (m: Mecanico) => { setEditing(m); setForm({ ...m }); setModalOpen(true); };
@@ -118,7 +128,7 @@ export default function Mecanicos() {
           <tbody>
             {filtered.length === 0 ? (
               <tr><td colSpan={4} className="empty-msg">Nenhum mecânico encontrado.</td></tr>
-            ) : filtered.map(m => (
+            ) : paginated.map(m => (
               <tr key={m.id}>
                 <td>
                   <div className="cell-user">
@@ -151,6 +161,14 @@ export default function Mecanicos() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filtered.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
       <Modal
         isOpen={modalOpen}

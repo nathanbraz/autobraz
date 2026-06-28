@@ -8,6 +8,7 @@ import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
 import OSForm from '../components/OSForm';
 import OSDetails from '../components/OSDetails';
+import Pagination from '../components/Pagination';
 import type { OrdemServico, OrdemServicoStatus } from '../types';
 import '../styles/pages/CrudPage.css';
 import '../styles/pages/OrdensServico.css';
@@ -67,6 +68,13 @@ export default function OrdensServico() {
     type: 'danger' | 'warning' | 'info';
   } | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeTab]);
+
   useEffect(() => { refreshAll(); }, []);
 
   const filtered = ordens.filter(o => {
@@ -83,6 +91,8 @@ export default function OrdensServico() {
   const sorted = [...filtered].sort((a, b) =>
     new Date(b.dataEntrada).getTime() - new Date(a.dataEntrada).getTime()
   );
+
+  const paginated = sorted.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleDelete = (id: string) => {
     setDeletingId(id);
@@ -177,7 +187,7 @@ export default function OrdensServico() {
             <ClipboardList size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 1rem' }} />
             <p className="empty-msg">Nenhuma ordem encontrada.</p>
           </div>
-        ) : sorted.map(os => {
+        ) : paginated.map(os => {
           const cliente = clientes.find(c => c.id === os.clienteId);
           const veiculo = veiculos.find(v => v.id === os.veiculoId);
           const mecanico = mecanicos.find(m => m.id === os.mecanicoId);
@@ -369,6 +379,14 @@ export default function OrdensServico() {
           );
         })}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filtered.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
       {/* Form Modal */}
       <Modal isOpen={formOpen} onClose={() => setFormOpen(false)} title={editingOS ? 'Editar OS' : 'Nova Ordem de Serviço'} size="xl">

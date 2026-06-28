@@ -5,6 +5,7 @@ import { useToast } from '../contexts/ToastContext';
 import { carroService } from '../services/carroService';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
+import Pagination from '../components/Pagination';
 import type { Veiculo } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -63,6 +64,13 @@ export default function Carros() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [lightboxImages, setLightboxImages] = useState<{ images: string[]; index: number } | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   useEffect(() => { refreshVeiculos(); }, []);
 
   const filtered = veiculos.filter(v =>
@@ -70,6 +78,8 @@ export default function Carros() {
     v.modelo.toLowerCase().includes(search.toLowerCase()) ||
     v.marca.toLowerCase().includes(search.toLowerCase())
   );
+
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openCreate = () => { setEditing(null); setForm(empty()); setModalOpen(true); };
   const openEdit = (v: Veiculo) => { setEditing(v); setForm({ fotos: [], ...v }); setModalOpen(true); };
@@ -159,7 +169,7 @@ export default function Carros() {
           <tbody>
             {filtered.length === 0 ? (
               <tr><td colSpan={6} className="empty-msg">Nenhum veículo encontrado.</td></tr>
-            ) : filtered.map(v => (
+            ) : paginated.map(v => (
               <tr key={v.id}>
                 <td><span className="plate-badge">{v.placa}</span></td>
                 <td>
@@ -194,6 +204,14 @@ export default function Carros() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filtered.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
       <Modal
         isOpen={modalOpen}

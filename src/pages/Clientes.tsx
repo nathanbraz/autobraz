@@ -5,6 +5,7 @@ import { useToast } from '../contexts/ToastContext';
 import { clienteService } from '../services/clienteService';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
+import Pagination from '../components/Pagination';
 import type { Cliente } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -23,6 +24,13 @@ export default function Clientes() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   useEffect(() => { refreshClientes(); }, []);
 
   const filtered = clientes.filter(c =>
@@ -30,6 +38,8 @@ export default function Clientes() {
     c.documento.includes(search) ||
     c.telefone.includes(search)
   );
+
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openCreate = () => { setEditing(null); setForm(empty()); setModalOpen(true); };
   const openEdit = (c: Cliente) => { setEditing(c); setForm({ ...c }); setModalOpen(true); };
@@ -116,7 +126,7 @@ export default function Clientes() {
           <tbody>
             {filtered.length === 0 ? (
               <tr><td colSpan={5} className="empty-msg">Nenhum cliente encontrado.</td></tr>
-            ) : filtered.map(c => (
+            ) : paginated.map(c => (
               <tr key={c.id}>
                 <td>
                   <div className="cell-user">
@@ -145,6 +155,14 @@ export default function Clientes() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filtered.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
       {/* Modal */}
       <Modal

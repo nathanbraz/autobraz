@@ -5,6 +5,7 @@ import { useToast } from '../contexts/ToastContext';
 import { produtoService } from '../services/produtoService';
 import Modal from '../components/Modal';
 import ConfirmModal from '../components/ConfirmModal';
+import Pagination from '../components/Pagination';
 import type { Produto } from '../types';
 import '../styles/pages/CrudPage.css';
 
@@ -26,6 +27,13 @@ export default function Produtos() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   useEffect(() => {
     refreshProdutos();
   }, []);
@@ -35,6 +43,8 @@ export default function Produtos() {
     p.codigo.toLowerCase().includes(search.toLowerCase()) ||
     (p.marca && p.marca.toLowerCase().includes(search.toLowerCase()))
   );
+
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openCreate = () => {
     setEditing(null);
@@ -140,7 +150,7 @@ export default function Produtos() {
                 <td colSpan={6} className="empty-msg">Nenhum produto encontrado.</td>
               </tr>
             ) : (
-              filtered.map(p => (
+              paginated.map(p => (
                 <tr key={p.id}>
                   <td>
                     <span className="plate-badge" style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>{p.codigo}</span>
@@ -176,6 +186,14 @@ export default function Produtos() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={filtered.length}
+        pageSize={pageSize}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={setPageSize}
+      />
 
       <Modal
         isOpen={modalOpen}
