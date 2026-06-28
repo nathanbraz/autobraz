@@ -1,5 +1,5 @@
 .sidebar {
-  width: 260px;
+  width: 285px;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   height: 100vh;
@@ -113,6 +113,14 @@
   min-width: 0;
 }
 
+.sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .sidebar-user-avatar {
   width: 32px;
   height: 32px;
@@ -187,7 +195,7 @@
 }
 
 .sidebar-mobile-toggle--open {
-  left: 206px;
+  left: 231px;
   background: transparent;
   border-color: transparent;
   box-shadow: none;

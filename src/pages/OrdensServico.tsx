@@ -126,7 +126,7 @@ export default function OrdensServico() {
       <div className="page-header">
         <div>
           <h2 className="page-title">Ordens de Serviço</h2>
-          <p className="page-sub">{ordens.length} ordem{ordens.length !== 1 ? 's' : ''} no sistema</p>
+          <p className="page-sub">{ordens.length} {ordens.length === 1 ? 'ordem' : 'ordens'} no sistema</p>
         </div>
         <button id="btn-nova-os" className="btn btn-primary" onClick={() => { setEditingOS(null); setFormOpen(true); }}>
           <Plus size={16} /> Nova OS
