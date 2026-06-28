@@ -10,8 +10,47 @@ import '../styles/pages/CrudPage.css';
 
 const empty = (): Omit<Veiculo, 'id'> => ({
   placa: '', marca: '', modelo: '', anoFabricacao: new Date().getFullYear(),
-  anoModelo: new Date().getFullYear(), cor: '', clienteId: '',
+  anoModelo: new Date().getFullYear(), cor: '', clienteId: '', fotos: [],
 });
+
+const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 
 export default function Carros() {
   const { veiculos, clientes, refreshVeiculos } = useApp();
@@ -22,6 +61,7 @@ export default function Carros() {
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [lightboxImages, setLightboxImages] = useState<{ images: string[]; index: number } | null>(null);
 
   useEffect(() => { refreshVeiculos(); }, []);
 
@@ -32,7 +72,7 @@ export default function Carros() {
   );
 
   const openCreate = () => { setEditing(null); setForm(empty()); setModalOpen(true); };
-  const openEdit = (v: Veiculo) => { setEditing(v); setForm({ ...v }); setModalOpen(true); };
+  const openEdit = (v: Veiculo) => { setEditing(v); setForm({ fotos: [], ...v }); setModalOpen(true); };
   const closeModal = () => { setModalOpen(false); setEditing(null); };
 
   const handleSave = async () => {
@@ -124,7 +164,17 @@ export default function Carros() {
                 <td><span className="plate-badge">{v.placa}</span></td>
                 <td>
                   <div className="cell-user">
-                    <div className="kpi-icon kpi-icon--slate" style={{ width: 32, height: 32 }}><Car size={14} /></div>
+                    {v.fotos && v.fotos.length > 0 ? (
+                      <img 
+                        src={v.fotos[0]} 
+                        alt={`${v.marca} ${v.modelo}`} 
+                        style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', objectFit: 'cover' }} 
+                      />
+                    ) : (
+                      <div className="kpi-icon kpi-icon--slate" style={{ width: 32, height: 32 }}>
+                        <Car size={14} />
+                      </div>
+                    )}
                     <div>
                       <div className="cell-name">{v.marca} {v.modelo}</div>
                     </div>
@@ -205,6 +255,55 @@ export default function Carros() {
             </select>
           </div>
         </div>
+
+        <div className="form-section">
+          <div className="form-section-title">Fotos do Veículo</div>
+          <div className="form-group">
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem', border: '1px dashed var(--border)', borderRadius: 'var(--radius-md)', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.02)' }}>
+              <Plus size={16} /> Selecionar Fotos...
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+                onChange={async (e) => {
+                  if (e.target.files) {
+                    const files = Array.from(e.target.files);
+                    try {
+                      const compressed = await Promise.all(files.map(compressImage));
+                      setForm(f => ({ ...f, fotos: [...(f.fotos || []), ...compressed] }));
+                    } catch (err) {
+                      toast.error('Erro ao processar imagens.');
+                    }
+                  }
+                }}
+              />
+            </label>
+          </div>
+          {form.fotos && form.fotos.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginTop: '1rem' }}>
+              {form.fotos.map((foto, idx) => (
+                <div key={idx} style={{ position: 'relative', width: 140, height: 100, borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <img 
+                    src={foto} 
+                    alt={`Veículo ${idx + 1}`} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} 
+                    onClick={() => setLightboxImages({ images: form.fotos || [], index: idx })}
+                  />
+                  <button 
+                    type="button"
+                    style={{ position: 'absolute', top: 4, right: 4, backgroundColor: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', zIndex: 10 }}
+                    onClick={() => {
+                      setForm(f => ({ ...f, fotos: (f.fotos || []).filter((_, i) => i !== idx) }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </Modal>
 
       <ConfirmModal
@@ -214,6 +313,76 @@ export default function Carros() {
         title="Excluir Veículo"
         message="Deseja realmente excluir este veículo? Esta ação não poderá ser desfeita e todas as ordens de serviço associadas a ele também serão impactadas."
       />
+
+      {/* Lightbox Overlay */}
+      {lightboxImages && (
+        <div 
+          className="os-lightbox-overlay"
+          onClick={() => setLightboxImages(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(11, 15, 25, 0.95)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <button 
+            style={{ position: 'absolute', top: '1rem', right: '1.5rem', background: 'none', border: 'none', color: '#f8fafc', fontSize: '2rem', cursor: 'pointer', zIndex: 10001 }}
+            onClick={(e) => { e.stopPropagation(); setLightboxImages(null); }}
+          >
+            &times;
+          </button>
+          
+          {lightboxImages.images.length > 1 && (
+            <button 
+              style={{ position: 'absolute', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: '50%', width: 44, height: 44, color: '#f8fafc', fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10001 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImages(prev => {
+                  if (!prev) return null;
+                  const newIndex = prev.index === 0 ? prev.images.length - 1 : prev.index - 1;
+                  return { ...prev, index: newIndex };
+                });
+              }}
+            >
+              &#10094;
+            </button>
+          )}
+
+          <div style={{ maxWidth: '90vw', maxHeight: '85vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }} onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={lightboxImages.images[lightboxImages.index]} 
+              alt={`Foto ${lightboxImages.index + 1}`} 
+              style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} 
+            />
+            <div style={{ color: '#f8fafc', fontSize: '0.875rem' }}>
+              Foto {lightboxImages.index + 1} de {lightboxImages.images.length}
+            </div>
+          </div>
+
+          {lightboxImages.images.length > 1 && (
+            <button 
+              style={{ position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: '50%', width: 44, height: 44, color: '#f8fafc', fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10001 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImages(prev => {
+                  if (!prev) return null;
+                  const newIndex = prev.index === prev.images.length - 1 ? 0 : prev.index + 1;
+                  return { ...prev, index: newIndex };
+                });
+              }}
+            >
+              &#10095;
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
