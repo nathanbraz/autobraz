@@ -18,6 +18,33 @@ const SEED_USUARIOS: Usuario[] = [
   { id: 'u3', nome: 'Carlos Técnico', email: 'carlos@autobraz.com', role: 'mecanico' },
 ];
 
+const GENERATED_CLIENTES: Cliente[] = [];
+const firstNames = ['Carlos', 'Ana', 'Bruno', 'Daniela', 'Eduardo', 'Fernanda', 'Gabriel', 'Helena', 'Igor', 'Julia', 'Lucas', 'Mariana', 'Otávio', 'Patrícia', 'Ricardo', 'Sofia', 'Thiago', 'Beatriz', 'Felipe', 'Camila'];
+const lastNames = ['Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves', 'Pereira', 'Lima', 'Gomes', 'Costa', 'Ribeiro', 'Martins', 'Carvalho', 'Almeida', 'Lopes', 'Soares', 'Dias', 'Vieira', 'Barbosa'];
+const cities = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Curitiba', 'Porto Alegre', 'Salvador', 'Recife', 'Fortaleza', 'Brasília', 'Campinas'];
+const neighborhoods = ['Centro', 'Bela Vista', 'Jardins', 'Vila Mariana', 'Pinheiros', 'Lapa', 'Moema', 'Itaim Bibi', 'Santana', 'Morumbi'];
+
+for (let i = 1; i <= 94; i++) {
+  const name = `${firstNames[i % firstNames.length]} ${lastNames[(i * 3) % lastNames.length]} ${lastNames[(i * 7) % lastNames.length]}`;
+  const phone = `(11) 9${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const cpf = `${Math.floor(100 + Math.random() * 900)}.${Math.floor(100 + Math.random() * 900)}.${Math.floor(100 + Math.random() * 900)}-${Math.floor(10 + Math.random() * 90)}`;
+  GENERATED_CLIENTES.push({
+    id: `c_gen_${i}`,
+    nome: name,
+    telefone: phone,
+    whatsapp: Math.random() > 0.3,
+    email: `${name.toLowerCase().replace(/\s+/g, '.').normalize('NFD').replace(/[\u0300-\u036f]/g, '')}@email.com`,
+    documento: cpf,
+    endereco: {
+      rua: `Rua das Palmeiras, nº ${10 + i}`,
+      numero: String(100 + i * 3),
+      bairro: neighborhoods[i % neighborhoods.length],
+      cidade: cities[i % cities.length],
+      cep: `${Math.floor(10000 + Math.random() * 80000)}-000`
+    }
+  });
+}
+
 const SEED_CLIENTES: Cliente[] = [
   {
     id: 'c1', nome: 'Rafael Oliveira', telefone: '(11) 98765-4321', whatsapp: true,
@@ -49,6 +76,7 @@ const SEED_CLIENTES: Cliente[] = [
     email: 'juliana@email.com', documento: '999.888.777-66',
     endereco: { rua: 'Rua do Sol', numero: '15', bairro: 'Boa Vista', cidade: 'Recife', cep: '50060-000' },
   },
+  ...GENERATED_CLIENTES
 ];
 
 const SEED_VEICULOS: Veiculo[] = [
