@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Search, Eye, Trash2, ChevronRight, ClipboardList, Pencil } from 'lucide-react';
+import { Plus, Search, Eye, Trash2, ChevronRight, ClipboardList, Pencil, Car } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -206,7 +206,7 @@ export default function OrdensServico() {
                     <div 
                       className="os-card-thumbnail-container"
                       onClick={() => setLightboxImages({ images: allPhotos, index: 0 })}
-                      style={{ cursor: 'pointer', position: 'relative', width: 64, height: 64, flexShrink: 0, borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border)' }}
+                      style={{ cursor: 'pointer', position: 'relative', width: 120, height: 120, flexShrink: 0, borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border)' }}
                     >
                       <img src={thumbnailUrl} alt="Veículo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       {extraCount > 0 && (
@@ -215,7 +215,13 @@ export default function OrdensServico() {
                         </div>
                       )}
                     </div>
-                  ) : null;
+                  ) : (
+                    <div 
+                      style={{ width: 120, height: 120, flexShrink: 0, borderRadius: 'var(--radius-md)', background: 'var(--bg-hover-subtle)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}
+                    >
+                      <Car size={48} />
+                    </div>
+                  );
                 })()}
 
                 <div className="os-card-info" style={{ flex: 1 }}>

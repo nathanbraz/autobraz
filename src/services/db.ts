@@ -34,6 +34,21 @@ const SEED_CLIENTES: Cliente[] = [
     email: 'pedro@email.com', documento: '456.789.123-00',
     endereco: { rua: 'Rua Augusta', numero: '500', bairro: 'Consolação', cidade: 'São Paulo', cep: '01305-000' },
   },
+  {
+    id: 'c4', nome: 'Aline Ferreira', telefone: '(31) 98888-7777', whatsapp: true,
+    email: 'aline@email.com', documento: '111.222.333-44',
+    endereco: { rua: 'Rua da Bahia', numero: '1020', bairro: 'Lourdes', cidade: 'Belo Horizonte', cep: '30160-011' },
+  },
+  {
+    id: 'c5', nome: 'Thiago Barbosa', telefone: '(41) 99999-8888', whatsapp: true,
+    email: 'thiago@email.com', documento: '555.666.777-88',
+    endereco: { rua: 'Av. Sete de Setembro', numero: '4500', bairro: 'Batel', cidade: 'Curitiba', cep: '80240-000' },
+  },
+  {
+    id: 'c6', nome: 'Juliana Lima', telefone: '(81) 97777-6666', whatsapp: true,
+    email: 'juliana@email.com', documento: '999.888.777-66',
+    endereco: { rua: 'Rua do Sol', numero: '15', bairro: 'Boa Vista', cidade: 'Recife', cep: '50060-000' },
+  },
 ];
 
 const SEED_VEICULOS: Veiculo[] = [
@@ -41,6 +56,10 @@ const SEED_VEICULOS: Veiculo[] = [
   { id: 'v2', placa: 'DEF-5678', marca: 'Honda', modelo: 'Civic', anoFabricacao: 2019, anoModelo: 2020, cor: 'Preto', clienteId: 'c1', fotos: ['/images/civic.png'] },
   { id: 'v3', placa: 'GHI-9012', marca: 'Chevrolet', modelo: 'Onix', anoFabricacao: 2022, anoModelo: 2022, cor: 'Branco', clienteId: 'c2', fotos: ['/images/onix.png'] },
   { id: 'v4', placa: 'BRA0J19', marca: 'Volkswagen', modelo: 'Golf', anoFabricacao: 2021, anoModelo: 2022, cor: 'Azul', clienteId: 'c3', fotos: ['/images/golf.png'] },
+  { id: 'v5', placa: 'JKL-3456', marca: 'Hyundai', modelo: 'HB20', anoFabricacao: 2018, anoModelo: 2019, cor: 'Cinza', clienteId: 'c4', fotos: [] },
+  { id: 'v6', placa: 'MNO-7890', marca: 'Fiat', modelo: 'Uno', anoFabricacao: 2015, anoModelo: 2016, cor: 'Vermelho', clienteId: 'c5', fotos: [] },
+  { id: 'v7', placa: 'PQR-1234', marca: 'Ford', modelo: 'Ka', anoFabricacao: 2017, anoModelo: 2018, cor: 'Prata', clienteId: 'c6', fotos: [] },
+  { id: 'v8', placa: 'STU-5678', marca: 'Jeep', modelo: 'Compass', anoFabricacao: 2021, anoModelo: 2021, cor: 'Cinza Escuro', clienteId: 'c2', fotos: [] },
 ];
 
 const SEED_MECANICOS: Mecanico[] = [
@@ -48,6 +67,7 @@ const SEED_MECANICOS: Mecanico[] = [
   { id: 'm2', nome: 'Carlos Pereira', especialidade: 'Elétrica Automotiva', ativo: true },
   { id: 'm3', nome: 'André Ramos', especialidade: 'Suspensão e Freios', ativo: true },
   { id: 'm4', nome: 'Marcos Lima', especialidade: 'Ar-condicionado', ativo: false },
+  { id: 'm5', nome: 'Roberto Melo', especialidade: 'Alinhamento e Balanceamento', ativo: true },
 ];
 
 const SEED_PRODUTOS: Produto[] = [
@@ -57,8 +77,9 @@ const SEED_PRODUTOS: Produto[] = [
   { id: 'p4', codigo: 'LA-PHI-H7', nome: 'Lâmpada Farol H7 Philips', precoVenda: 60.00, quantidadeEstoque: 20, marca: 'Philips' },
   { id: 'p5', codigo: 'AD-PAR-R1', nome: 'Aditivo Radiador Paraflu 1L', precoVenda: 28.00, quantidadeEstoque: 30, marca: 'Paraflu' },
   { id: 'p6', codigo: 'PA-DYN-18', nome: 'Palheta Limpador Dyna 18"', precoVenda: 35.00, quantidadeEstoque: 12, marca: 'Dyna' },
+  { id: 'p7', codigo: 'AM-NAK-TRD', nome: 'Amortecedor Dianteiro Cofap', precoVenda: 320.00, quantidadeEstoque: 6, marca: 'Cofap' },
+  { id: 'p8', codigo: 'VL-NGK-IRB', nome: 'Vela de Ignição NGK Iridium', precoVenda: 55.00, quantidadeEstoque: 24, marca: 'NGK' },
 ];
-
 
 const SEED_OS: OrdemServico[] = [
   {
@@ -94,12 +115,81 @@ const SEED_OS: OrdemServico[] = [
       { id: uid(), descricao: 'Revisão completa', valor: 150, horas: 2 },
     ],
     pecas: [
-      { id: uid(), descricao: 'Óleo Mobil 5W30 5L', quantidade: 1, valorUnitario: 120 },
-      { id: uid(), descricao: 'Filtro de óleo', quantidade: 1, valorUnitario: 35 },
+      { id: uid(), descricao: 'Óleo Mobil 5W30 5L', quantidade: 5, valorUnitario: 38 },
+      { id: uid(), descricao: 'Filtro de óleo Bosch', quantidade: 1, valorUnitario: 45 },
     ],
-    desconto: 20, valorTotalServicos: 230, valorTotalPecas: 155, valorTotalGeral: 365,
+    desconto: 20, valorTotalServicos: 230, valorTotalPecas: 235, valorTotalGeral: 445,
     status: 'AguardandoAprovacao', dataEntrada: '2026-06-24T10:00:00',
     observacoes: 'Cliente pediu para avisar antes de iniciar serviço.',
+  },
+  {
+    id: 'os4', numeroOS: 'OS-2026-0004', clienteId: 'c4', veiculoId: 'v5', mecanicoId: 'm3',
+    quilometragemEntrada: 89000, nivelCombustivel: '1/4',
+    checklist: { estepe: true, macaco: true, chaveRoda: true, radio: false, riscosAmassados: 'Parachoque dianteiro trincado' },
+    reclamacaoCliente: 'Amortecedor estourado batendo muito', diagnosticoTecnico: 'Amortecedor dianteiro direito com vazamento',
+    servicos: [{ id: uid(), descricao: 'Troca de amortecedores dianteiros', valor: 250, horas: 3 }],
+    pecas: [{ id: uid(), descricao: 'Amortecedor Dianteiro Cofap (Par)', quantidade: 2, valorUnitario: 320 }],
+    desconto: 50, valorTotalServicos: 250, valorTotalPecas: 640, valorTotalGeral: 840,
+    status: 'EmExecucao', dataEntrada: '2026-06-25T11:00:00',
+    observacoes: 'Substituir kit coxim e coifa também.',
+  },
+  {
+    id: 'os5', numeroOS: 'OS-2026-0005', clienteId: 'c5', veiculoId: 'v6', mecanicoId: 'm5',
+    quilometragemEntrada: 150000, nivelCombustivel: 'Reserva',
+    checklist: { estepe: false, macaco: false, chaveRoda: false, radio: true, riscosAmassados: 'Lataria com bastante amassados de uso' },
+    reclamacaoCliente: 'Alinhar direção e balancear rodas', diagnosticoTecnico: 'Desgaste irregular dos pneus, necessário alinhar e balancear',
+    servicos: [{ id: uid(), descricao: 'Alinhamento 3D + Balanceamento', valor: 120, horas: 1.5 }],
+    pecas: [],
+    desconto: 10, valorTotalServicos: 120, valorTotalPecas: 0, valorTotalGeral: 110,
+    status: 'Vistoria', dataEntrada: '2026-06-26T14:20:00',
+    observacoes: 'Fazer rodízio de pneus também.',
+  },
+  {
+    id: 'os6', numeroOS: 'OS-2026-0006', clienteId: 'c6', veiculoId: 'v7',
+    quilometragemEntrada: 67000, nivelCombustivel: '1/2',
+    checklist: { estepe: true, macaco: true, chaveRoda: true, radio: true, riscosAmassados: '' },
+    reclamacaoCliente: 'Dificuldade de dar partida de manhã', diagnosticoTecnico: 'Velas de ignição desgastadas e bicos sujos',
+    servicos: [
+      { id: uid(), descricao: 'Limpeza de bicos injetores', valor: 120, horas: 1.5 },
+      { id: uid(), descricao: 'Troca de velas de ignição', valor: 60, horas: 0.8 },
+    ],
+    pecas: [{ id: uid(), descricao: 'Vela de Ignição NGK Iridium', quantidade: 4, valorUnitario: 55 }],
+    desconto: 0, valorTotalServicos: 180, valorTotalPecas: 220, valorTotalGeral: 400,
+    status: 'Orcamento', dataEntrada: '2026-06-27T08:00:00',
+    observacoes: '',
+  },
+  {
+    id: 'os7', numeroOS: 'OS-2026-0007', clienteId: 'c1', veiculoId: 'v2', mecanicoId: 'm3',
+    quilometragemEntrada: 52100, nivelCombustivel: '3/4',
+    checklist: { estepe: true, macaco: true, chaveRoda: true, radio: true, riscosAmassados: 'Porta traseira direita riscada' },
+    reclamacaoCliente: 'Luz da injeção acesa no painel', diagnosticoTecnico: 'Falha na sonda lambda',
+    servicos: [{ id: uid(), descricao: 'Diagnóstico por scanner + Troca de Sonda', valor: 180, horas: 1.5 }],
+    pecas: [{ id: uid(), descricao: 'Sonda Lambda Bosch', quantidade: 1, valorUnitario: 350 }],
+    desconto: 0, valorTotalServicos: 180, valorTotalPecas: 350, valorTotalGeral: 530,
+    status: 'Entregue', dataEntrada: '2026-06-15T09:15:00', dataConclusao: '2026-06-16T17:30:00',
+    observacoes: 'Pago em PIX.',
+  },
+  {
+    id: 'os8', numeroOS: 'OS-2026-0008', clienteId: 'c2', veiculoId: 'v8', mecanicoId: 'm1',
+    quilometragemEntrada: 35000, nivelCombustivel: '1/2',
+    checklist: { estepe: true, macaco: true, chaveRoda: true, radio: true, riscosAmassados: '' },
+    reclamacaoCliente: 'Barulho na suspensão dianteira esquerda', diagnosticoTecnico: 'Bieleta da barra estabilizadora quebrada',
+    servicos: [{ id: uid(), descricao: 'Troca de bieletas estabilizadoras', valor: 90, horas: 1 }],
+    pecas: [{ id: uid(), descricao: 'Bieleta Dianteira Cofap (Par)', quantidade: 1, valorUnitario: 140 }],
+    desconto: 10, valorTotalServicos: 90, valorTotalPecas: 140, valorTotalGeral: 220,
+    status: 'Cancelado', dataEntrada: '2026-06-18T10:00:00',
+    observacoes: 'Cliente desistiu do reparo por motivos pessoais.',
+  },
+  {
+    id: 'os9', numeroOS: 'OS-2026-0009', clienteId: 'c3', veiculoId: 'v4', mecanicoId: 'm2',
+    quilometragemEntrada: 13500, nivelCombustivel: '3/4',
+    checklist: { estepe: true, macaco: true, chaveRoda: true, radio: true, riscosAmassados: '' },
+    reclamacaoCliente: 'Farol dianteiro direito queimado', diagnosticoTecnico: 'Lâmpada H7 queimada',
+    servicos: [{ id: uid(), descricao: 'Troca de lâmpada de farol', valor: 30, horas: 0.3 }],
+    pecas: [{ id: uid(), descricao: 'Lâmpada Farol H7 Philips', quantidade: 1, valorUnitario: 60 }],
+    desconto: 0, valorTotalServicos: 30, valorTotalPecas: 60, valorTotalGeral: 90,
+    status: 'Pronto', dataEntrada: '2026-06-27T15:00:00',
+    observacoes: 'Aguardando cliente vir retirar.',
   },
 ];
 
