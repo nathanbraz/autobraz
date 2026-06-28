@@ -32,6 +32,7 @@ export interface Veiculo {
   anoModelo: number;
   cor: string;
   clienteId: string; // Belongs to Cliente
+  fotos?: string[];
 }
 
 export interface Mecanico {
@@ -109,6 +110,7 @@ export interface OrdemServico {
   dataSaida?: string; // ISO String
   
   observacoes: string;
+  fotos?: string[];
 }
 
 export interface Produto {

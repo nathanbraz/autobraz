@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Printer } from 'lucide-react';
 import type { OrdemServico, Cliente, Veiculo, Mecanico } from '../types';
 import '../styles/components/OSDetails.css';
@@ -20,6 +21,7 @@ const PGTO: Record<string, string> = {
 };
 
 export default function OSDetails({ os, clientes, veiculos, mecanicos }: OSDetailsProps) {
+  const [lightboxImages, setLightboxImages] = useState<{ images: string[]; index: number } | null>(null);
   const cliente = clientes.find(c => c.id === os.clienteId);
   const veiculo = veiculos.find(v => v.id === os.veiculoId);
   const mecanico = mecanicos.find(m => m.id === os.mecanicoId);
@@ -99,6 +101,48 @@ export default function OSDetails({ os, clientes, veiculos, mecanicos }: OSDetai
           </p>
         )}
       </div>
+
+      {/* Galeria de Fotos */}
+      {((os.fotos && os.fotos.length > 0) || (veiculo?.fotos && veiculo.fotos.length > 0)) && (
+        <div className="os-detail-section no-print">
+          <div className="os-detail-section-title">Galeria de Imagens</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {os.fotos && os.fotos.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>Fotos da Ordem de Serviço (Check-in/Diagnóstico)</h4>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {os.fotos.map((foto, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => setLightboxImages({ images: os.fotos || [], index: idx })}
+                      style={{ cursor: 'pointer', width: 90, height: 90, borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}
+                    >
+                      <img src={foto} alt={`Foto O.S. ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {veiculo?.fotos && veiculo.fotos.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>Fotos do Cadastro do Veículo (Gerais)</h4>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {veiculo.fotos.map((foto, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => setLightboxImages({ images: veiculo.fotos || [], index: idx })}
+                      style={{ cursor: 'pointer', width: 90, height: 90, borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}
+                    >
+                      <img src={foto} alt={`Foto Veículo ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Diagnóstico */}
       <div className="os-detail-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
@@ -187,6 +231,76 @@ export default function OSDetails({ os, clientes, veiculos, mecanicos }: OSDetai
           <p>Responsável Técnico</p>
         </div>
       </div>
+
+      {/* Lightbox Overlay */}
+      {lightboxImages && (
+        <div 
+          className="os-lightbox-overlay"
+          onClick={() => setLightboxImages(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(11, 15, 25, 0.95)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <button 
+            style={{ position: 'absolute', top: '1rem', right: '1.5rem', background: 'none', border: 'none', color: '#f8fafc', fontSize: '2rem', cursor: 'pointer', zIndex: 10001 }}
+            onClick={(e) => { e.stopPropagation(); setLightboxImages(null); }}
+          >
+            &times;
+          </button>
+          
+          {lightboxImages.images.length > 1 && (
+            <button 
+              style={{ position: 'absolute', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: '50%', width: 44, height: 44, color: '#f8fafc', fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10001 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImages(prev => {
+                  if (!prev) return null;
+                  const newIndex = prev.index === 0 ? prev.images.length - 1 : prev.index - 1;
+                  return { ...prev, index: newIndex };
+                });
+              }}
+            >
+              &#10094;
+            </button>
+          )}
+
+          <div style={{ maxWidth: '90vw', maxHeight: '85vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }} onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={lightboxImages.images[lightboxImages.index]} 
+              alt={`Foto ${lightboxImages.index + 1}`} 
+              style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} 
+            />
+            <div style={{ color: '#f8fafc', fontSize: '0.875rem' }}>
+              Foto {lightboxImages.index + 1} de {lightboxImages.images.length}
+            </div>
+          </div>
+
+          {lightboxImages.images.length > 1 && (
+            <button 
+              style={{ position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: '50%', width: 44, height: 44, color: '#f8fafc', fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10001 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxImages(prev => {
+                  if (!prev) return null;
+                  const newIndex = prev.index === prev.images.length - 1 ? 0 : prev.index + 1;
+                  return { ...prev, index: newIndex };
+                });
+              }}
+            >
+              &#10095;
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

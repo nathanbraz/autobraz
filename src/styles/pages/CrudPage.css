@@ -115,4 +115,9 @@
   font-family: var(--font-family);
 }
 .filter-tab:hover { background: var(--bg-hover-subtle); color: var(--text-primary); }
-.filter-tab--active { background: var(--accent-glow); border-color: rgba(37,99,235,0.3); color: var(--text-primary); }
+.filter-tab--active { 
+  background: var(--accent-primary); 
+  border-color: var(--accent-primary); 
+  color: #ffffff; 
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); 
+}

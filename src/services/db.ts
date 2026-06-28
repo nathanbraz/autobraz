@@ -37,10 +37,10 @@ const SEED_CLIENTES: Cliente[] = [
 ];
 
 const SEED_VEICULOS: Veiculo[] = [
-  { id: 'v1', placa: 'ABC-1234', marca: 'Toyota', modelo: 'Corolla', anoFabricacao: 2020, anoModelo: 2021, cor: 'Prata', clienteId: 'c1' },
-  { id: 'v2', placa: 'DEF-5678', marca: 'Honda', modelo: 'Civic', anoFabricacao: 2019, anoModelo: 2020, cor: 'Preto', clienteId: 'c1' },
-  { id: 'v3', placa: 'GHI-9012', marca: 'Chevrolet', modelo: 'Onix', anoFabricacao: 2022, anoModelo: 2022, cor: 'Branco', clienteId: 'c2' },
-  { id: 'v4', placa: 'BRA0J19', marca: 'Volkswagen', modelo: 'Golf', anoFabricacao: 2021, anoModelo: 2022, cor: 'Azul', clienteId: 'c3' },
+  { id: 'v1', placa: 'ABC-1234', marca: 'Toyota', modelo: 'Corolla', anoFabricacao: 2020, anoModelo: 2021, cor: 'Prata', clienteId: 'c1', fotos: ['/images/corolla.png'] },
+  { id: 'v2', placa: 'DEF-5678', marca: 'Honda', modelo: 'Civic', anoFabricacao: 2019, anoModelo: 2020, cor: 'Preto', clienteId: 'c1', fotos: ['/images/civic.png'] },
+  { id: 'v3', placa: 'GHI-9012', marca: 'Chevrolet', modelo: 'Onix', anoFabricacao: 2022, anoModelo: 2022, cor: 'Branco', clienteId: 'c2', fotos: ['/images/onix.png'] },
+  { id: 'v4', placa: 'BRA0J19', marca: 'Volkswagen', modelo: 'Golf', anoFabricacao: 2021, anoModelo: 2022, cor: 'Azul', clienteId: 'c3', fotos: ['/images/golf.png'] },
 ];
 
 const SEED_MECANICOS: Mecanico[] = [
@@ -71,6 +71,7 @@ const SEED_OS: OrdemServico[] = [
     desconto: 0, valorTotalServicos: 150, valorTotalPecas: 180, valorTotalGeral: 330,
     status: 'Pronto', dataEntrada: '2026-06-20T08:30:00', dataConclusao: '2026-06-22T16:00:00',
     observacoes: 'Verificar também o disco de freio traseiro na próxima revisão.',
+    fotos: ['/images/corolla.png'],
   },
   {
     id: 'os2', numeroOS: 'OS-2026-0002', clienteId: 'c2', veiculoId: 'v3', mecanicoId: 'm2',

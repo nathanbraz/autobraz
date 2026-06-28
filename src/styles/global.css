@@ -18,11 +18,11 @@
   
   /* Status Colors */
   --color-vistoria: #38bdf8;          /* Light Blue */
-  --color-orcamento: #f43f5e;          /* Rose */
-  --color-aguardando: #eab308;         /* Amber */
+  --color-orcamento: #f59e0b;          /* Amber / Yellowish */
+  --color-aguardando: #f97316;         /* Orange */
   --color-execucao: #3b82f6;           /* Blue */
-  --color-pronto: #10b981;             /* Emerald */
-  --color-entregue: #059669;           /* Green */
+  --color-pronto: #4ade80;             /* Light Green */
+  --color-entregue: #047857;           /* Dark Green */
   --color-cancelado: #ef4444;          /* Red */
   
   /* Fonts */
@@ -68,11 +68,11 @@ html.light {
   --accent-glow: rgba(37, 99, 235, 0.08); /* Glow effect for hover */
   
   --color-vistoria: #0284c7;          /* Sky Blue */
-  --color-orcamento: #e11d48;         /* Rose */
-  --color-aguardando: #b45309;        /* Amber */
+  --color-orcamento: #d97706;         /* Amber / Yellowish */
+  --color-aguardando: #ea580c;        /* Orange */
   --color-execucao: #2563eb;          /* Blue */
-  --color-pronto: #059669;            /* Emerald */
-  --color-entregue: #15803d;          /* Green */
+  --color-pronto: #22c55e;            /* Light Green */
+  --color-entregue: #15803d;          /* Dark Green */
   --color-cancelado: #dc2626;         /* Red */
   
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
@@ -196,11 +196,11 @@ p {
   border: 1px solid transparent;
 }
 .badge-vistoria { background: rgba(56, 189, 248, 0.1); color: var(--color-vistoria); border-color: rgba(56, 189, 248, 0.2); }
-.badge-orcamento { background: rgba(244, 63, 94, 0.1); color: var(--color-orcamento); border-color: rgba(244, 63, 94, 0.2); }
-.badge-aguardando { background: rgba(234, 179, 8, 0.1); color: var(--color-aguardando); border-color: rgba(234, 179, 8, 0.2); }
+.badge-orcamento { background: rgba(245, 158, 11, 0.1); color: var(--color-orcamento); border-color: rgba(245, 158, 11, 0.2); }
+.badge-aguardando { background: rgba(249, 115, 22, 0.1); color: var(--color-aguardando); border-color: rgba(249, 115, 22, 0.2); }
 .badge-execucao { background: rgba(59, 130, 246, 0.1); color: var(--color-execucao); border-color: rgba(59, 130, 246, 0.2); }
-.badge-pronto { background: rgba(16, 185, 129, 0.1); color: var(--color-pronto); border-color: rgba(16, 185, 129, 0.2); }
-.badge-entregue { background: rgba(5, 150, 105, 0.1); color: var(--color-entregue); border-color: rgba(5, 150, 105, 0.2); }
+.badge-pronto { background: rgba(74, 222, 128, 0.1); color: var(--color-pronto); border-color: rgba(74, 222, 128, 0.2); }
+.badge-entregue { background: rgba(4, 120, 87, 0.1); color: var(--color-entregue); border-color: rgba(4, 120, 87, 0.2); }
 .badge-cancelado { background: rgba(239, 68, 68, 0.1); color: var(--color-cancelado); border-color: rgba(239, 68, 68, 0.2); }
 
 /* Buttons */

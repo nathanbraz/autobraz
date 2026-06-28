@@ -26,12 +26,53 @@ const defaultOS = (): Omit<OrdemServico, 'id' | 'numeroOS' | 'valorTotalServicos
   status: 'Vistoria',
   dataEntrada: new Date().toISOString(),
   observacoes: '',
+  fotos: [],
 });
+
+const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 
 export default function OSForm({ os, clientes, veiculos, mecanicos, onSave, onCancel }: OSFormProps) {
   const { produtos = [] } = useApp();
   const { toast } = useToast();
-  const [form, setForm] = useState(os ? { ...os } : defaultOS());
+  const [form, setForm] = useState(os ? { fotos: [], ...os } : defaultOS());
   const [saving, setSaving] = useState(false);
   const [veiculosFiltrados, setVeiculosFiltrados] = useState<Veiculo[]>([]);
 
@@ -159,6 +200,47 @@ export default function OSForm({ os, clientes, veiculos, mecanicos, onSave, onCa
         <div className="form-group">
           <label className="form-label">Riscos / Amassados (descreva ou deixe em branco)</label>
           <textarea className="form-control" rows={2} value={form.checklist.riscosAmassados} onChange={e => setChk('riscosAmassados', e.target.value)} placeholder="Ex: Pequeno amassado na porta traseira direita..." />
+        </div>
+        <div className="form-group" style={{ marginTop: '1rem' }}>
+          <label className="form-label">Fotos de Entrada / Vistoria (Opcional)</label>
+          <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem', border: '1px dashed var(--border)', borderRadius: 'var(--radius-md)', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.02)' }}>
+            <Plus size={16} /> Anexar Fotos do Carro...
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+              onChange={async (e) => {
+                if (e.target.files) {
+                  const files = Array.from(e.target.files);
+                  try {
+                    const compressed = await Promise.all(files.map(compressImage));
+                    setForm(f => ({ ...f, fotos: [...(f.fotos || []), ...compressed] }));
+                  } catch (err) {
+                    toast.error('Erro ao processar imagens.');
+                  }
+                }
+              }}
+            />
+          </label>
+          {form.fotos && form.fotos.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '0.5rem', marginTop: '1rem' }}>
+              {form.fotos.map((foto, idx) => (
+                <div key={idx} style={{ position: 'relative', width: 80, height: 80, borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <img src={foto} alt={`Foto ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <button 
+                    type="button"
+                    style={{ position: 'absolute', top: 2, right: 2, backgroundColor: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '50%', width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '10px' }}
+                    onClick={() => {
+                      setForm(f => ({ ...f, fotos: (f.fotos || []).filter((_, i) => i !== idx) }));
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -326,18 +408,20 @@ export default function OSForm({ os, clientes, veiculos, mecanicos, onSave, onCa
               <option value="Faturado">Faturado</option>
             </select>
           </div>
-          <div className="form-group">
-            <label className="form-label">Status da OS</label>
-            <select className="form-control" value={form.status} onChange={e => set('status', e.target.value)}>
-              <option value="Vistoria">Vistoria</option>
-              <option value="Orcamento">Orçamento</option>
-              <option value="AguardandoAprovacao">Aguardando Aprovação</option>
-              <option value="EmExecucao">Em Execução</option>
-              <option value="Pronto">Pronto</option>
-              <option value="Entregue">Entregue</option>
-              <option value="Cancelado">Cancelado</option>
-            </select>
-          </div>
+          {os && (
+            <div className="form-group">
+              <label className="form-label">Status da OS</label>
+              <select className="form-control" value={form.status} onChange={e => set('status', e.target.value)}>
+                <option value="Vistoria">Vistoria</option>
+                <option value="Orcamento">Orçamento</option>
+                <option value="AguardandoAprovacao">Aguardando Aprovação</option>
+                <option value="EmExecucao">Em Execução</option>
+                <option value="Pronto">Pronto</option>
+                <option value="Entregue">Entregue</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          )}
         </div>
         <div className="form-group">
           <label className="form-label">Observações</label>
